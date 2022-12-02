@@ -32,20 +32,17 @@ fun main() {
             }
         }
 
-        var result = 0
-        for (inputPair in inputPairs) {
-            result += when (inputPair.first) {
-                Options.ROCK -> calculateResultRock(inputPair.second)
-                Options.PAPER -> calculateResultPaper(inputPair.second)
-                Options.SCISSORS -> calculateResultScissors(inputPair.second)
+        return inputPairs.sumOf {
+            when (it.first) {
+                Options.ROCK -> calculateResultRock(it.second)
+                Options.PAPER -> calculateResultPaper(it.second)
+                Options.SCISSORS -> calculateResultScissors(it.second)
             }
         }
-        return result
     }
 
     fun part2(input: List<String>): Int {
         val inputPairs = input.map { it.split(" ") }.map { Options.valueOfInput(it[0]) to GameResult.valueOfInput(it[1]) }
-        var result = 0
 
         fun calculateResultRock(gameResult: GameResult): Int {
             return when (gameResult) {
@@ -71,14 +68,13 @@ fun main() {
             }
         }
 
-        for (inputPair in inputPairs) {
-            result += when (inputPair.first) {
-                Options.ROCK -> calculateResultRock(inputPair.second)
-                Options.PAPER -> calculateResultPaper(inputPair.second)
-                Options.SCISSORS -> calculateResultScissors(inputPair.second)
+        return inputPairs.sumOf {
+            when (it.first) {
+                Options.ROCK -> calculateResultRock(it.second)
+                Options.PAPER -> calculateResultPaper(it.second)
+                Options.SCISSORS -> calculateResultScissors(it.second)
             }
         }
-        return result
     }
 
     val input = readInput("day02/Day02")
