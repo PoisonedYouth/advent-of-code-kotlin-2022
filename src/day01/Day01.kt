@@ -1,5 +1,9 @@
+package day01
+
+import readInput
+
 fun main() {
-    fun createListOfAmountPerElve(input: List<String>): MutableList<Int> {
+    fun createListOfAmountPerElve(input: List<String>): List<Int> {
         val elvesAmount = mutableListOf(0)
         input.forEach {
             if (it.isNotBlank()) {
@@ -8,7 +12,7 @@ fun main() {
                 elvesAmount.add(0)
             }
         }
-        return elvesAmount
+        return elvesAmount.toList()
     }
 
     fun part1(input: List<String>): Int {
@@ -21,7 +25,7 @@ fun main() {
         return elvesAmount.sortedDescending().take(3).sum()
     }
 
-    val input = readInput("Day01")
+    val input = readInput("day01/Day01")
     println(part1(input))
     println(part2(input))
 }
