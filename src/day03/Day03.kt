@@ -10,7 +10,7 @@ fun main() {
 
     fun part1(input: List<String>): Int {
         return input.sumOf { line ->
-            val (part1, part2) = line.chunked(line.length / 2).map { it.toCharArray().toSet() }
+            val (part1, part2) = line.chunked(line.length / 2).map { it.toSet() }
             part1.intersect(part2).first().calculatePriority()
         }
     }
@@ -18,7 +18,7 @@ fun main() {
 
     fun part2(input: List<String>): Int {
         return input.chunked(3).sumOf { group ->
-            val (elv1, elv2, elv3) = group.map { it.toCharArray().toSet() }
+            val (elv1, elv2, elv3) = group.map { it.toSet() }
             elv1.intersect(elv2).intersect(elv3).first().calculatePriority()
         }
     }
