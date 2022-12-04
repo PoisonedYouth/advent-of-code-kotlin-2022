@@ -12,11 +12,11 @@ fun main() {
         )
     }
 
-    fun IntRange.fullyContains(other: IntRange): Boolean {
+    infix fun IntRange.fullyContains(other: IntRange): Boolean {
         return this.all { other.contains(it) }
     }
 
-    fun IntRange.overlap(other: IntRange): Boolean {
+    infix fun IntRange.overlap(other: IntRange): Boolean {
         return this.any { other.contains(it) }
     }
 
@@ -25,7 +25,7 @@ fun main() {
             val (elv1, elv2) = line.split(",")
             val elv1Range = splitToRange(elv1)
             val elv2Range = splitToRange(elv2)
-            elv1Range.fullyContains(elv2Range) || elv2Range.fullyContains(elv1Range)
+            elv1Range fullyContains elv2Range || elv2Range fullyContains elv1Range
         }
     }
 
@@ -34,7 +34,7 @@ fun main() {
             val (elv1, elv2) = line.split(",")
             val elv1Range = splitToRange(elv1)
             val elv2Range = splitToRange(elv2)
-            elv1Range.overlap(elv2Range)
+            elv1Range overlap elv2Range
         }
     }
 
