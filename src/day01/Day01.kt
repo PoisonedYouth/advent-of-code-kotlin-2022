@@ -3,7 +3,7 @@ package day01
 import readInput
 
 fun main() {
-    fun createListOfAmountPerElve(input: List<String>): List<Int> {
+    fun createListOfAmountPerElf(input: List<String>): List<Int> {
         val elvesAmount = mutableListOf(0)
         input.forEach {
             if (it.isNotBlank()) {
@@ -16,12 +16,12 @@ fun main() {
     }
 
     fun part1(input: List<String>): Int {
-        val elvesAmount = createListOfAmountPerElve(input)
+        val elvesAmount = createListOfAmountPerElf(input)
         return elvesAmount.max()
     }
 
     fun part2(input: List<String>): Int {
-        val elvesAmount = createListOfAmountPerElve(input)
+        val elvesAmount = createListOfAmountPerElf(input)
         return elvesAmount.sortedDescending().take(3).sum()
     }
 
