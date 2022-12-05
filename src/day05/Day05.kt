@@ -14,21 +14,11 @@ data class Instruction(
 
 fun main() {
     fun initStack(input: List<String>): List<Stack<String?>> {
-        val stacks = listOf(
-            Stack<String?>(),
-            Stack<String?>(),
-            Stack<String?>(),
-            Stack<String?>(),
-            Stack<String?>(),
-            Stack<String?>(),
-            Stack<String?>(),
-            Stack<String?>(),
-            Stack<String?>(),
-        )
+        val stacks = List(9) { Stack<String?>() }
         input.take(8).reversed().map { line ->
             val cranes = craneRegex.findAll(line)
             cranes.forEach {
-                stacks[it.range.first / 4].push(it.value.substring(1, 2))
+                stacks[it.range.first / 4].push(it.groupValues[1])
             }
         }
         return stacks
@@ -37,12 +27,12 @@ fun main() {
     fun initInstructionList(input: List<String>): List<Instruction> {
         val instructions = input.drop(10).map { line ->
             val instructionInput = instructionRegex.find(line) ?: error("Invalid Input!")
-            if (instructionInput.groups.size != 4) error("Invalid Input!")
-            val (amount, origin, target) = instructionInput.groups.drop(1).toList()
+            if (instructionInput.groupValues.size != 4) error("Invalid Input!")
+            val (amount, origin, target) = instructionInput.groupValues.drop(1).toList()
             Instruction(
-                amount = amount!!.value.toInt(),
-                origin = origin!!.value.toInt(),
-                target = target!!.value.toInt()
+                amount = amount.toInt(),
+                origin = origin.toInt(),
+                target = target.toInt()
             )
         }
         return instructions
