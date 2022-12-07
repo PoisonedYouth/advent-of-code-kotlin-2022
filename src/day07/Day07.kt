@@ -1,24 +1,29 @@
 package day07
 
+import day07.Directory.Companion.ROOT
 import readInput
-import org.openjdk.jmh.annotations.*;
 
+private class Directory(val parent: Directory?, val children: MutableList<Directory> = mutableListOf()) {
+    var size = 0L
+
+    fun getTotal(): Long = this.size + this.children.sumOf { it.getTotal() }
+
+    companion object {
+        val ROOT: Directory = Directory(
+            parent = null
+        )
+    }
+}
 
 fun main() {
-    data class Directory(val parent: Directory?, val name: String, val children: MutableList<Directory> = mutableListOf()) {
-        var size = 0L
 
-        fun getTotal(): Long = this.size + this.children.sumOf { it.getTotal() }
-    }
-
-    fun createFilesystemGraph(input: List<String>): MutableList<Directory> {
-        val root = Directory(null, "/")
-        var current = root
-        val directories = mutableListOf(root)
+    fun createFilesystemGraph(input: List<String>): List<Directory> {
+        var current = ROOT
+        val directories = mutableListOf(ROOT)
         input.forEach { line ->
             when {
                 line == "$ cd /" -> {
-                    current = root
+                    current = ROOT
                 }
 
                 line == "$ cd .." -> {
@@ -26,7 +31,7 @@ fun main() {
                 }
 
                 line.startsWith("$ cd ") -> {
-                    val directory = Directory(parent = current, name = line.substringAfter(" "))
+                    val directory = Directory(parent = current)
                     current.children.add(directory)
                     if (!directories.contains(directory)) {
                         directories.add(directory)
@@ -43,18 +48,18 @@ fun main() {
                 }
             }
         }
-        return directories
+        return directories.toList()
     }
 
     fun part1(input: List<String>): Long {
         val directories = createFilesystemGraph(input)
-        return directories.map { it.getTotal() }.filter { it <= 100000 }.sum()
+        return directories.map { it.getTotal() }.filter { it <= 100_000 }.sum()
     }
 
     fun part2(input: List<String>): Long {
         val directories = createFilesystemGraph(input)
 
-        val missingSpace = 30000000 - (70000000 - directories.first().getTotal())
+        val missingSpace = 30_000_000 - (70_000_000 - directories.first().getTotal())
         return directories.filter { it.getTotal() >= missingSpace }.minOf { it.getTotal() }
     }
 
