@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.7.21"
+    id("org.jetbrains.kotlinx.benchmark") version("0.4.4")
 }
 
 repositories {
@@ -17,3 +18,4 @@ tasks {
         gradleVersion = "7.5.1"
     }
 }
+
