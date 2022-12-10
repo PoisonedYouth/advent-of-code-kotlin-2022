@@ -46,7 +46,6 @@ private data class Point(
 
 fun main() {
 
-
     fun part1(input: List<String>): Int {
         var head = Point.START
         var tail = head
