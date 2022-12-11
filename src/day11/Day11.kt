@@ -22,7 +22,6 @@ data class Monkey(
                     "+" -> value + operationNumberCalculated
                     "*" -> value * operationNumberCalculated
                     else -> error("Invalid input!")
-
                 }
             }
 
