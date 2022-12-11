@@ -5,9 +5,8 @@ import readInput
 data class Monkey(
     val index: Int,
     val items: MutableList<Long>,
-    val operationSign: Char,
-    val operationNumber: Int?,
-    val destination: (Long) -> Int,
+    val worryOperation: (Long) -> Long,
+    val throwOperation: (Long) -> Int,
     val divisor: Int,
     var inspections: Long = 0
 ) {
@@ -17,11 +16,21 @@ data class Monkey(
             val items = input[1].substringAfter("  Starting items: ").split(", ").map { it.toLong() }.toMutableList()
             val (_, operator, operationNumber) = input[2].substringAfter("  Operation: new = ").split(" ")
 
+            fun worryOperation(value: Long): Long {
+                val operationNumberCalculated = operationNumber.toLongOrNull() ?: value
+                return when (operator) {
+                    "+" -> value + operationNumberCalculated
+                    "*" -> value * operationNumberCalculated
+                    else -> error("Invalid input!")
+
+                }
+            }
+
             val test = input[3].substringAfter("  Test: divisible by ").toLong()
             val success = input[4].substringAfter("    If true: throw to monkey ").toInt()
             val fail = input[5].substringAfter("    If false: throw to monkey ").toInt()
 
-            fun throwTo(value: Long): Int {
+            fun throwOperation(value: Long): Int {
                 return if (value % test == 0L) {
                     success
                 } else {
@@ -31,9 +40,8 @@ data class Monkey(
             return Monkey(
                 index = index,
                 items = items,
-                operationSign = operator[0],
-                operationNumber = operationNumber.toIntOrNull(),
-                destination = ::throwTo,
+                worryOperation = ::worryOperation,
+                throwOperation = ::throwOperation,
                 divisor = test.toInt()
             )
         }
@@ -41,21 +49,14 @@ data class Monkey(
 }
 
 fun main() {
-    fun part1(input: List<String>): Long {
-        val monkeys = input.chunked(7).map { Monkey.from(it) }.toMutableList()
-        repeat(20) {
+    fun calculateInspectionProduct(monkeys: List<Monkey>, iterations: Int, reduceOperation: (Long) -> Long): Long {
+        repeat(iterations) {
             monkeys.forEach { monkey ->
                 repeat(monkey.items.size) {
                     monkey.inspections++
                     val item = monkey.items.removeFirst()
-                    val oppNumber = monkey.operationNumber?.toLong() ?: item
-                    val result = when (monkey.operationSign) {
-                        '+' -> item + oppNumber
-                        '*' -> item * oppNumber
-                        else -> error("Invalid input!")
-
-                    } / 3
-                    val destination = monkey.destination(result)
+                    val result = reduceOperation(monkey.worryOperation(item))
+                    val destination = monkey.throwOperation(result)
                     monkeys[destination].apply {
                         this.items += result
                     }
@@ -65,29 +66,27 @@ fun main() {
         return monkeys.sortedByDescending { it.inspections }.let { it[0].inspections * it[1].inspections }
     }
 
+    fun part1(input: List<String>): Long {
+        val monkeys = input.chunked(7).map { Monkey.from(it) }.toMutableList()
+        return calculateInspectionProduct(
+            monkeys = monkeys,
+            iterations = 20,
+            reduceOperation = {
+                it / 3
+            }
+        )
+    }
+
     fun part2(input: List<String>): Long {
         val monkeys = input.chunked(7).map { Monkey.from(it) }.toMutableList()
-        val product = monkeys.map { it.divisor }.fold(1L) { acc, v -> acc * v }
-        repeat(10000) {
-            monkeys.forEach { monkey ->
-                repeat(monkey.items.size) {
-                    monkey.inspections++
-                    val item = monkey.items.removeFirst()
-                    val oppNumber = monkey.operationNumber?.toLong() ?: item
-                    val result = when (monkey.operationSign) {
-                        '+' -> item + oppNumber
-                        '*' -> item * oppNumber
-                        else -> error("Invalid input!")
-
-                    } % product
-                    val destination = monkey.destination(result)
-                    monkeys[destination].apply {
-                        this.items += result
-                    }
-                }
+        val reduce = monkeys.map { it.divisor }.reduce { acc, i -> acc * i }
+        return calculateInspectionProduct(
+            monkeys = monkeys,
+            iterations = 10000,
+            reduceOperation = {
+                it % reduce
             }
-        }
-        return monkeys.sortedByDescending { it.inspections }.let { it[0].inspections * it[1].inspections }
+        )
     }
 
     val input = readInput("day11/Day11")
