@@ -1,14 +1,20 @@
 package day12
 
 import readInput
+import java.util.*
 
 private class Point(
     val x: Int,
     val y: Int,
     val code: Char,
     val height: Int,
-) {
+) : Comparable<Point> {
     var dist: Int = -1
+
+    override fun compareTo(other: Point): Int {
+        return this.dist.compareTo(other.dist)
+    }
+
 }
 
 fun main() {
@@ -49,17 +55,18 @@ fun main() {
         }
 
         val destinationPoint = grid.flatten().single { it.code == 'E' }
-        destinationPoint.dist = 0
-        val processedPoints = mutableSetOf(destinationPoint)
-        while (processedPoints.isNotEmpty()) {
-            val point = processedPoints.first().also { processedPoints.remove(it) }
-            if (point.code == target) {
-                return point.dist - 2
-            }
+        val processedPoints = mutableSetOf<Point>()
+        val priorityQueue = PriorityQueue<Point>().apply { add(destinationPoint) }
+        while (priorityQueue.isNotEmpty()) {
+            val point = priorityQueue.poll()
             point.neighbors().filter { it.height + 1 >= point.height }.forEach { neighbour ->
-                if (neighbour.dist == -1) {
+                if (neighbour.code == target) {
+                    return point.dist
+                }
+                if (neighbour !in processedPoints) {
                     neighbour.dist = point.dist + 1
                     processedPoints.add(neighbour)
+                    priorityQueue.add(neighbour)
                 }
             }
         }
